@@ -55,7 +55,7 @@
 # AWS EC2
 - name: Filter For EC2 Instances By Tags
   ec2_remote_facts:
-    region: "{{ region }}"
+    region: "us-east-1"
     filters:
       "tag:user_id": "{{ tower_user_name }}"
   register: aws_ec2_facts
