@@ -24,7 +24,7 @@
   register: vpc_subnet
   tags:
     - provision
-    
+
 - debug: var=vpc_subnet
 
 - debug: var=vpc_subnet.subnets[0].id
@@ -73,7 +73,7 @@
 - name: Terminate EC2 instances that were previously launched
   ec2:
     state: 'absent'
-    region: "us-eas-1"
+    region: "us-east-1"
     instance_ids: '{{ aws_ec2_facts.instances[0].id }}'
   tags: 
     - terminate
