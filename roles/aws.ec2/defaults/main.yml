@@ -1,0 +1,4 @@
+# file: roles/aws.ec2/defaults/main.yml
+---
+#
+# foo: default

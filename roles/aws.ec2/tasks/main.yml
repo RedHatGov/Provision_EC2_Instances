@@ -1,0 +1,76 @@
+# file: roles/aws.ec2/tasks/main.yml
+---
+#---------------------------------------------------
+#  Provision
+#---------------------------------------------------
+- name: Gather facts
+  ec2_remote_facts:
+    region: "us-east-1"
+  register: EC2
+  tags:
+    - provision
+
+- debug: var=EC2.instances[0].vpc_id
+
+- name: Set the VPC ID
+  set_fact: vpc_id="{{ EC2.instances[0].vpc_id }}"
+  tags:
+    - provision
+
+- ec2_vpc_subnet_facts:
+    region: "us-east-1"
+    filters:
+      vpc-id: "{{vpc_id}}"
+  register: vpc_subnet
+
+- debug: var=vpc_subnet.subnets[0].id
+
+- name: Set the VPC Subnet ID
+  set_fact: vpc_subnet_id="{{ vpc_subnet.subnets[0].id }}"
+  tags:
+    - provision
+
+- name: create ec2 instance
+  ec2:
+    keypair: tower
+    type: t2.small
+    image: ami-b63769a1
+    region: us-east-1
+    count: 1
+    vpc_subnet_id: "{{ vpc_subnet_id }}" 
+    assign_public_ip: yes
+    instance_tags:
+      Name: "{{ tower_user_name }}-lab"
+      ansible_lab: true
+      user_id: "{{ tower_user_name }}"
+    wait: true
+  register: ec2
+  tags:
+    - provision
+
+#---------------------------------------------------
+#  Terminate
+#---------------------------------------------------
+
+# AWS EC2
+- name: Filter For EC2 Instances By Tags
+  ec2_remote_facts:
+    region: "{{ region }}"
+    filters:
+      "tag:user_id": "{{ tower_user_name }}"
+  register: aws_ec2_facts
+  tags: 
+    - terminate
+
+- debug: var=aws_ec2_facts.instances[0].id
+  tags: 
+    - terminate
+
+- name: Terminate EC2 instances that were previously launched
+  ec2:
+    state: 'absent'
+    region: "us-eas-1"
+    instance_ids: '{{ aws_ec2_facts.instances[0].id }}'
+  tags: 
+    - terminate
+

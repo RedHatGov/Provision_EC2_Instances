@@ -1,0 +1,8 @@
+# file: site.yml
+---
+- name: Provision EC2 Instances 
+  remote_user: ec2-user
+  hosts: 127.0.0.1
+  become: no
+  roles:
+  - aws.ec2

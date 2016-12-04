@@ -1,0 +1,4 @@
+# file: roles/aws.ec2/vars/main.yml
+---
+#
+# foo: bar

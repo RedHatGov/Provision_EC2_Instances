@@ -1,0 +1,6 @@
+# file: roles/aws.ec2/handlers/main.yml
+---
+# For example,
+# 
+# - name: restart ntpd
+#   service: name=ntpd state=restarted
