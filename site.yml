@@ -3,6 +3,7 @@
 - name: Provision EC2 Instances 
   remote_user: ec2-user
   hosts: 127.0.0.1
-  become: no
+  connection: local
+  gather_facts: false
   roles:
   - aws.ec2
