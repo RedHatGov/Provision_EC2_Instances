@@ -6,14 +6,14 @@
 - name: Gather facts
   ec2_remote_facts:
     region: "us-east-1"
-  register: EC2
+  register: aws_ec2
   tags:
     - provision
 
-- debug: var=EC2.instances[0].vpc_id
+- debug: var=aws_ec2.instances[0].vpc_id
 
 - name: Set the VPC ID
-  set_fact: vpc_id="{{ EC2.instances[0].vpc_id }}"
+  set_fact: vpc_id="{{ aws_ec2.instances[0].vpc_id }}"
   tags:
     - provision
 
@@ -22,6 +22,10 @@
     filters:
       vpc-id: "{{vpc_id}}"
   register: vpc_subnet
+  tags:
+    - provision
+    
+- debug: var=vpc_subnet
 
 - debug: var=vpc_subnet.subnets[0].id
 
